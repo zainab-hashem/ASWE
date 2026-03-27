@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const NotificationService = require('../services/NotificationService');
 
 const validTypes = ['closure', 'delay', 'accident', 'weather_hazard', 'other'];
 const validSeverities = ['low', 'medium', 'high', 'critical'];
@@ -207,6 +208,7 @@ exports.updateIncidentStatus = (req, res) => {
     return res.status(400).json({ message: `Invalid status. Must be one of: ${validStatuses.join(', ')}` });
   }
 
+  // ✅ ONLY ONE SELECT (keep this one)
   db.query(`SELECT * FROM incidents WHERE id = ?`, [incidentId], (err, results) => {
     if (err) {
       console.error('updateIncidentStatus select error:', err);
@@ -218,8 +220,9 @@ exports.updateIncidentStatus = (req, res) => {
     }
 
     const incident = results[0];
+    const oldStatus = incident.status; // ✅ use THIS
 
-    if (incident.status === status) {
+    if (oldStatus === status) {
       return res.status(400).json({ message: `Incident already has status: ${status}` });
     }
 
@@ -235,10 +238,20 @@ exports.updateIncidentStatus = (req, res) => {
         return res.status(500).json({ message: 'Database error' });
       }
 
+      // ✅ trigger alert only if status changed to verified
+      if (status === 'verified' && oldStatus !== 'verified') {
+        NotificationService.handleIncidentVerified({
+          id: incidentId,
+          area: incident.area,
+          incident_type: incident.incident_type,
+          title: incident.title
+        });
+      }
+
       res.json({
         message: `Incident status updated to '${status}' successfully`,
         incident_id: incidentId,
-        old_status: incident.status,
+        old_status: oldStatus,
         new_status: status
       });
     });
