@@ -3,8 +3,9 @@ const mysql = require('mysql2');
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'root123',
-database: 'wasel_project'});
+  password: 'root1234',
+  database: 'wasel_project'
+});
 
 db.connect((err) => {
   if (err) {
@@ -15,3 +16,4 @@ db.connect((err) => {
 });
 
 module.exports = db;
+
