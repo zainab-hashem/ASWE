@@ -135,11 +135,11 @@ exports.voteReport = (req, res) => {
   });
 };
 
-// 5️⃣ تغيير حالة البلاغ (مشرف فقط)
+// 5️⃣ تغيير حالة البلاغ (مشرف أو ادمن)
 exports.updateReportStatus = (req, res) => {
   const reportId = req.params.id;
   const { status } = req.body;
-  const moderatorId = req.user.id;
+  const userId = req.user.id;
 
   const validStatuses = ['pending', 'in_progress', 'resolved'];
   if (!validStatuses.includes(status)) {
