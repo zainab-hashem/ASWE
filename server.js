@@ -1,6 +1,11 @@
 require('dotenv').config();
 
 const express = require('express');
+const { ApolloServer } = require('@apollo/server');
+const { expressMiddleware } = require('@apollo/server/express4');
+const typeDefs = require('./src/graphql/schema');
+const resolvers = require('./src/graphql/resolvers');
+
 const app = express();
 const db = require('./src/config/db');
 
@@ -26,6 +31,16 @@ app.use('/api/v1/weather', weatherRoutes);
 
 const PORT = 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+async function startServer() {
+  const apolloServer = new ApolloServer({ typeDefs, resolvers });
+  await apolloServer.start();
+
+  app.use('/graphql', expressMiddleware(apolloServer));
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`GraphQL available at http://localhost:${PORT}/graphql`);
+  });
+}
+
+startServer();
