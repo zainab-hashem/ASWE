@@ -1,7 +1,7 @@
 
 const db = require('../config/db');
 
-// 1️⃣ إرسال بلاغ جديد مع كشف المكرر
+
 exports.createReport = (req, res) => {
   const { title, description, location, latitude, longitude, category } = req.body;
   const userId = req.user.id;
@@ -53,7 +53,7 @@ exports.createReport = (req, res) => {
 };
 
 
-// 2️⃣ عرض كل البلاغات مع فلترة
+
 exports.getAllReports = (req, res) => {
   const { category, status } = req.query;
 
@@ -91,7 +91,7 @@ exports.getAllReports = (req, res) => {
   });
 };
 
-// 3️⃣ عرض بلاغ معين
+
 exports.getReportById = (req, res) => {
   const reportId = req.params.id;
 
@@ -113,7 +113,7 @@ exports.getReportById = (req, res) => {
   });
 };
 
-// 4️⃣ التصويت على بلاغ
+
 exports.voteReport = (req, res) => {
   const reportId = req.params.id;
   const userId = req.user.id;
@@ -135,7 +135,7 @@ exports.voteReport = (req, res) => {
   });
 };
 
-// 5️⃣ تغيير حالة البلاغ (مشرف أو ادمن)
+
 exports.updateReportStatus = (req, res) => {
   const reportId = req.params.id;
   const { status } = req.body;
@@ -146,18 +146,18 @@ exports.updateReportStatus = (req, res) => {
     return res.status(400).json({ message: 'Invalid status' });
   }
 
-  // جيبي الحالة القديمة أول
+  
   db.query('SELECT status FROM reports WHERE id = ?', [reportId], (err, results) => {
     if (err) return res.status(500).json({ message: 'Database error' });
     if (results.length === 0) return res.status(404).json({ message: 'Report not found' });
 
     const oldStatus = results[0].status;
 
-    // حدثي الحالة
+    
     db.query('UPDATE reports SET status = ? WHERE id = ?', [status, reportId], (err) => {
       if (err) return res.status(500).json({ message: 'Database error' });
 
-      // سجلي في التاريخ
+      
       const historySql = `
         INSERT INTO report_status_history (report_id, old_status, new_status)
         VALUES (?, ?, ?)
@@ -171,7 +171,7 @@ exports.updateReportStatus = (req, res) => {
   });
 };
 
-// 6️⃣ عرض سجل التغييرات
+
 exports.getReportHistory = (req, res) => {
   const reportId = req.params.id;
 
@@ -187,7 +187,7 @@ exports.getReportHistory = (req, res) => {
   });
 };
 
-// 7️⃣ حذف بلاغ (ادمن فقط)
+
 exports.deleteReport = (req, res) => {
   const reportId = req.params.id;
 
@@ -199,7 +199,7 @@ exports.deleteReport = (req, res) => {
   });
   };
 
-// 8️⃣ عرض تصويتات البلاغ
+
 exports.getReportVotes = (req, res) => {
   const reportId = req.params.id;
 

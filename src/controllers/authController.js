@@ -53,21 +53,21 @@ exports.login = (req, res) => {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    // Access token - صلاحية 1 ساعة
+    
     const accessToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       ACCESS_SECRET,
       { expiresIn: '1h' }
     );
 
-    // Refresh token - صلاحية 7 أيام
+    
     const refreshToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       REFRESH_SECRET,
       { expiresIn: '7d' }
     );
 
-    // احفظ الـ refresh token في قاعدة البيانات
+    
     db.query(
       `INSERT INTO refresh_tokens (user_id, token) VALUES (?, ?) ON DUPLICATE KEY UPDATE token = ?`,
       [user.id, refreshToken, refreshToken],
@@ -84,7 +84,7 @@ exports.login = (req, res) => {
   });
 };
 
-// POST /api/v1/auth/refresh
+
 exports.refreshToken = (req, res) => {
   const { refresh_token } = req.body;
 
@@ -92,7 +92,7 @@ exports.refreshToken = (req, res) => {
     return res.status(400).json({ message: 'Refresh token is required' });
   }
 
-  // تحقق من الـ token في قاعدة البيانات
+  
   db.query(
     `SELECT * FROM refresh_tokens WHERE token = ?`,
     [refresh_token],
@@ -106,7 +106,7 @@ exports.refreshToken = (req, res) => {
       try {
         const decoded = jwt.verify(refresh_token, REFRESH_SECRET);
 
-        // أنشئ access token جديد
+        
         const newAccessToken = jwt.sign(
           { id: decoded.id, email: decoded.email, role: decoded.role },
           ACCESS_SECRET,
@@ -124,7 +124,7 @@ exports.refreshToken = (req, res) => {
   );
 };
 
-// POST /api/v1/auth/logout
+
 exports.logout = (req, res) => {
   const { refresh_token } = req.body;
 

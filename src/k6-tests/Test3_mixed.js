@@ -48,7 +48,7 @@ export default function (data) {
   const rand = Math.random();
 
   if (rand < 0.7) {
-    // ===== READ (70%) =====
+    
     const readScenarios = [
       () => {
         const res = http.get(`${BASE_URL}/incidents`);
@@ -80,7 +80,7 @@ export default function (data) {
     scenario();
 
   } else {
-    // ===== WRITE (30%) =====
+    
     if (!data.citizenToken) {
       sleep(1);
       return;

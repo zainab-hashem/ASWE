@@ -3,14 +3,14 @@ const axios = require('axios');
 const API_KEY = process.env.WEATHER_API_KEY;
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
-// Simple in-memory cache
-const cache = {};
-const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
-// Rate limiting
+const cache = {};
+const CACHE_TTL = 10 * 60 * 1000; 
+
+
 const requestLog = [];
-const RATE_LIMIT = 50; // max requests per minute
-const RATE_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT = 50; 
+const RATE_WINDOW = 60 * 1000; 
 
 const isRateLimited = () => {
   const now = Date.now();
@@ -25,14 +25,14 @@ const getWeatherByCity = async (city) => {
     throw new Error('Weather API key is not configured');
   }
 
-  // Check cache
+  
   const cacheKey = city.toLowerCase();
   const cached = cache[cacheKey];
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     return { ...cached.data, fromCache: true };
   }
 
-  // Check rate limit
+  
   if (isRateLimited()) {
     throw new Error('Rate limit exceeded. Please try again later.');
   }
@@ -47,7 +47,7 @@ const getWeatherByCity = async (city) => {
         units: 'metric',
         lang: 'ar'
       },
-      timeout: 5000 // 5 seconds timeout
+      timeout: 5000 
     });
 
     const data = {
@@ -65,7 +65,7 @@ const getWeatherByCity = async (city) => {
       retrieved_at: new Date().toISOString()
     };
 
-    // Save to cache
+    
     cache[cacheKey] = { data, timestamp: Date.now() };
 
     return data;

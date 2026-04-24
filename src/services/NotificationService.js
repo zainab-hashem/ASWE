@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 class NotificationService {
 
-  // 🎯 This is what your controller will call
+  
   static handleIncidentVerified(incident) {
     const { id, area, incident_type, title } = incident;
 
@@ -40,9 +40,9 @@ class NotificationService {
         console.log(`✅ ${values.length} alerts created`);
       });
 
-      // 🔮 Future (just leave this comment)
-      // sendEmail(users, message)
-      // sendSMS(users, message)
+      
+      
+      
     });
   }
 }

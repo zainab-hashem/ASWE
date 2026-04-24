@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 const resolvers = {
   Query: {
-    // Checkpoints
+    
     checkpoints: (_, { area, current_status }) => {
       return new Promise((resolve, reject) => {
         const filters = [];
@@ -30,7 +30,7 @@ const resolvers = {
       });
     },
 
-    // Incidents
+    
     incidents: (_, { incident_type, severity, status }) => {
       return new Promise((resolve, reject) => {
         const filters = [];
@@ -59,7 +59,7 @@ const resolvers = {
       });
     },
 
-    // Reports
+    
     reports: (_, { category, status }) => {
       return new Promise((resolve, reject) => {
         const filters = [];
