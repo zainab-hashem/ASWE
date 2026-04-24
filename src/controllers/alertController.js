@@ -1,6 +1,6 @@
 const db = require('../config/db');
 
-// 📌 Get alerts
+
 exports.getAlerts = (req, res) => {
   const userId = req.user.id;
 
@@ -23,7 +23,7 @@ exports.getAlerts = (req, res) => {
   });
 };
 
-// 📌 Mark alert as read
+
 exports.markAsRead = (req, res) => {
   const alertId = req.params.id;
   const userId = req.user.id;

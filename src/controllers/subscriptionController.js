@@ -1,6 +1,6 @@
 const db = require('../config/db');
 
-// 📌 Subscribe
+
 exports.subscribe = (req, res) => {
   const { area, incident_type } = req.body;
   const userId = req.user.id;

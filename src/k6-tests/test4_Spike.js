@@ -9,16 +9,16 @@ const responseTrend = new Trend('spike_response_time');
  
 export const options = {
   stages: [
-    { duration: '10s', target: 5 },   // بداية هادئة
-    { duration: '10s', target: 100 }, // SPIKE! - ارتفاع مفاجئ لـ 100 مستخدم
-    { duration: '1m',  target: 100 }, // ثبات على الضغط العالي
-    { duration: '10s', target: 5 },   // نزول مفاجئ
-    { duration: '30s', target: 5 },   // استقرار
-    { duration: '10s', target: 0 },   // إنهاء
+    { duration: '10s', target: 5 },   
+    { duration: '10s', target: 100 }, 
+    { duration: '1m',  target: 100 }, 
+    { duration: '10s', target: 5 },   
+    { duration: '30s', target: 5 },   
+    { duration: '10s', target: 0 },   
   ],
   thresholds: {
-    http_req_duration: ['p(95)<5000'], // نسمح بـ 5 ثواني خلال الـ spike
-    spike_error_rate: ['rate<0.15'],   // نقبل حتى 15% أخطاء خلال الـ spike
+    http_req_duration: ['p(95)<5000'], 
+    spike_error_rate: ['rate<0.15'],   
   },
 };
  

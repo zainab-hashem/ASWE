@@ -1,6 +1,6 @@
 const db = require('../config/db');
 
-// إنشاء checkpoint
+
 exports.createCheckpoint = (req, res) => {
   const { name, area, latitude, longitude } = req.body;
   const userId = req.user.id;
@@ -27,7 +27,7 @@ exports.createCheckpoint = (req, res) => {
   });
 };
 
-// عرض كل checkpoints مع filtering + sorting + pagination
+
 exports.getAllCheckpoints = (req, res) => {
   let {
     page = 1,
@@ -92,7 +92,7 @@ exports.getAllCheckpoints = (req, res) => {
   });
 };
 
-// عرض checkpoint واحد حسب id
+
 exports.getCheckpointById = (req, res) => {
   const checkpointId = req.params.id;
 
@@ -127,7 +127,7 @@ exports.getCheckpointById = (req, res) => {
   });
 };
 
-// تحديث status لل checkpoint + حفظ history
+
 exports.updateCheckpointStatus = (req, res) => {
   const checkpointId = req.params.id;
   const { current_status } = req.body;

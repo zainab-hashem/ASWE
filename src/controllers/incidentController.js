@@ -5,7 +5,7 @@ const validTypes = ['closure', 'delay', 'accident', 'weather_hazard', 'other'];
 const validSeverities = ['low', 'medium', 'high', 'critical'];
 const validStatuses = ['open', 'verified', 'closed'];
 
-// POST /api/v1/incidents
+
 exports.createIncident = (req, res) => {
   const {
     checkpoint_id,
@@ -55,7 +55,7 @@ exports.createIncident = (req, res) => {
   );
 };
 
-// GET /api/v1/incidents
+
 exports.getAllIncidents = (req, res) => {
   let {
     page = 1,
@@ -126,7 +126,7 @@ exports.getAllIncidents = (req, res) => {
   });
 };
 
-// GET /api/v1/incidents/:id
+
 exports.getIncidentById = (req, res) => {
   const incidentId = req.params.id;
 
@@ -151,7 +151,7 @@ exports.getIncidentById = (req, res) => {
   });
 };
 
-// PATCH /api/v1/incidents/:id
+
 exports.updateIncident = (req, res) => {
   const incidentId = req.params.id;
   const { title, description, incident_type, severity, area, latitude, longitude } = req.body;
@@ -198,7 +198,7 @@ exports.updateIncident = (req, res) => {
   });
 };
 
-// PATCH /api/v1/incidents/:id/status
+
 exports.updateIncidentStatus = (req, res) => {
   const incidentId = req.params.id;
   const { status } = req.body;
@@ -208,7 +208,7 @@ exports.updateIncidentStatus = (req, res) => {
     return res.status(400).json({ message: `Invalid status. Must be one of: ${validStatuses.join(', ')}` });
   }
 
-  // ✅ ONLY ONE SELECT (keep this one)
+  
   db.query(`SELECT * FROM incidents WHERE id = ?`, [incidentId], (err, results) => {
     if (err) {
       console.error('updateIncidentStatus select error:', err);
@@ -220,7 +220,7 @@ exports.updateIncidentStatus = (req, res) => {
     }
 
     const incident = results[0];
-    const oldStatus = incident.status; // ✅ use THIS
+    const oldStatus = incident.status; 
 
     if (oldStatus === status) {
       return res.status(400).json({ message: `Incident already has status: ${status}` });
@@ -238,7 +238,7 @@ exports.updateIncidentStatus = (req, res) => {
         return res.status(500).json({ message: 'Database error' });
       }
 
-      // ✅ trigger alert only if status changed to verified
+      
       if (status === 'verified' && oldStatus !== 'verified') {
         NotificationService.handleIncidentVerified({
           id: incidentId,
@@ -258,7 +258,7 @@ exports.updateIncidentStatus = (req, res) => {
   });
 };
 
-// DELETE /api/v1/incidents/:id
+
 exports.deleteIncident = (req, res) => {
   const incidentId = req.params.id;
 

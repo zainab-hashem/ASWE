@@ -9,6 +9,8 @@ const resolvers = require('./src/graphql/resolvers');
 const app = express();
 const db = require('./src/config/db');
 
+const setupSwagger = require('./src/swagger');
+
 const checkpointRoutes = require('./src/routes/checkpointRoutes');
 const incidentRoutes = require('./src/routes/incidentRoutes');
 const authRoutes = require('./src/routes/authRoutes');
@@ -28,6 +30,8 @@ app.use('/api/v1/mobility', mobilityRoutes);
 app.use('/api/v1/alerts', alertRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
 app.use('/api/v1/weather', weatherRoutes);
+
+setupSwagger(app);
 
 const PORT = 3000;
 

@@ -1,7 +1,7 @@
 const { getWeatherByCity, getWeatherByCoords } = require('../services/weatherService');
 const db = require('../config/db');
 
-// GET /api/v1/weather?city=Nablus
+
 exports.getWeatherByCity = async (req, res) => {
   const { city } = req.query;
 
@@ -17,7 +17,7 @@ exports.getWeatherByCity = async (req, res) => {
   }
 };
 
-// GET /api/v1/weather/checkpoint/:id
+
 exports.getWeatherByCheckpoint = async (req, res) => {
   const checkpointId = req.params.id;
 
@@ -44,7 +44,7 @@ exports.getWeatherByCheckpoint = async (req, res) => {
   });
 };
 
-// GET /api/v1/weather/incident/:id
+
 exports.getWeatherByIncident = async (req, res) => {
   const incidentId = req.params.id;
 
