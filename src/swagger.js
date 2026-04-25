@@ -39,7 +39,6 @@ const swaggerDocument = {
         requestBody: {
           content: { 'application/json': { 
             examples: {
-              
               'Ready-made example': { value: { email: 'zainab@test.com', password: 'zainab123' } },
               'Try it yourself': { value: { email: '', password: '' } }
             }
@@ -81,7 +80,11 @@ const swaggerDocument = {
         summary: '[F1.1] Get All Checkpoints',
         parameters: [
           { name: 'area', in: 'query', schema: { type: 'string' }, example: 'Nablus' },
-          { name: 'current_status', in: 'query', schema: { type: 'string', enum: ['open', 'delayed', 'closed', 'hazard'] } }
+          { name: 'current_status', in: 'query', schema: { type: 'string', enum: ['open', 'delayed', 'closed', 'hazard'] } },
+          { name: 'page', in: 'query', schema: { type: 'integer' }, example: 1, description: 'Page number (default: 1)' },
+          { name: 'limit', in: 'query', schema: { type: 'integer' }, example: 10, description: 'Items per page (default: 10, max: 100)' },
+          { name: 'sort_by', in: 'query', schema: { type: 'string', enum: ['name', 'area', 'created_at', 'updated_at', 'current_status'] }, description: 'Field to sort by' },
+          { name: 'order', in: 'query', schema: { type: 'string', enum: ['ASC', 'DESC'] }, description: 'Sort order' }
         ],
         responses: { 200: { description: 'Success' } }
       },
@@ -117,7 +120,21 @@ const swaggerDocument = {
     //  INCIDENTS [F1.5 - F1.10]
     
     '/incidents': {
-      get: { tags: ['🚨 Incidents'], summary: '[F1.5] Get All Incidents', responses: { 200: { description: 'Success' } } },
+      get: {
+        tags: ['🚨 Incidents'],
+        summary: '[F1.5] Get All Incidents',
+        parameters: [
+          { name: 'incident_type', in: 'query', schema: { type: 'string', enum: ['closure', 'delay', 'accident', 'weather_hazard', 'other'] }, description: 'Filter by incident type' },
+          { name: 'severity', in: 'query', schema: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] }, description: 'Filter by severity' },
+          { name: 'status', in: 'query', schema: { type: 'string', enum: ['open', 'verified', 'closed'] }, description: 'Filter by status' },
+          { name: 'checkpoint_id', in: 'query', schema: { type: 'integer' }, example: 1, description: 'Filter by checkpoint' },
+          { name: 'page', in: 'query', schema: { type: 'integer' }, example: 1, description: 'Page number (default: 1)' },
+          { name: 'limit', in: 'query', schema: { type: 'integer' }, example: 10, description: 'Items per page (default: 10)' },
+          { name: 'sort_by', in: 'query', schema: { type: 'string', enum: ['created_at', 'updated_at', 'severity', 'incident_type', 'status'] }, description: 'Field to sort by' },
+          { name: 'order', in: 'query', schema: { type: 'string', enum: ['ASC', 'DESC'] }, description: 'Sort order' }
+        ],
+        responses: { 200: { description: 'Success' } }
+      },
       post: {
         tags: ['🚨 Incidents'],
         summary: '[F1.7] Log Incident',
@@ -162,14 +179,22 @@ const swaggerDocument = {
     //  REPORTS [F2.1 - F2.8]
     
     '/reports': {
-      get: { tags: ['📝 Reports'], summary: '[F2.1] Get All Reports', responses: { 200: { description: 'Success' } } },
+      get: {
+        tags: ['📝 Reports'],
+        summary: '[F2.1] Get All Reports',
+        parameters: [
+          { name: 'category', in: 'query', schema: { type: 'string', enum: ['checkpoint', 'accident', 'closure', 'delay', 'weather', 'other'] }, description: 'Filter by category' },
+          { name: 'status', in: 'query', schema: { type: 'string', enum: ['pending', 'in_progress', 'resolved'] }, description: 'Filter by status' }
+        ],
+        responses: { 200: { description: 'Success' } }
+      },
       post: {
         tags: ['📝 Reports'],
         summary: '[F2.3] Submit Citizen Report',
         security: [{ bearerAuth: [] }],
         requestBody: { content: { 'application/json': { examples: {
-          'Ready-made example': { value: { title: 'أزمة خانقة', description: 'يوجد أزمة على المدخل', location: 'Nablus', category: 'delay' } },
-          'Try it yourself': { value: { title: '', description: '', location: '', category: '' } }
+          'Ready-made example': { value: { title: 'أزمة خانقة', description: 'يوجد أزمة على المدخل', location: 'Nablus', category: 'delay', latitude: 32.152, longitude: 35.262 } },
+          'Try it yourself': { value: { title: '', description: '', location: '', category: '', latitude: null, longitude: null } }
         } } } },
         responses: { 201: { description: 'Success' } }
       }
@@ -219,6 +244,8 @@ const swaggerDocument = {
         security: [{ bearerAuth: [] }],
         requestBody: { content: { 'application/json': { examples: {
           'Ready-made example': { value: { area: 'نابلس', incident_type: 'closure' } },
+          'Subscribe to all areas': { value: { area: null, incident_type: 'delay' } },
+          'Subscribe to everything': { value: { area: null, incident_type: null } },
           'Try it yourself': { value: { area: '', incident_type: '' } }
         } } } },
         responses: { 201: { description: 'Success' } }
@@ -240,21 +267,27 @@ const swaggerDocument = {
         tags: ['🟡 Mobility'],
         summary: '[F3.1] Estimate Route',
         parameters: [
-          { name: 'origin', in: 'query', required: true, example: 'Nablus' },
-          { name: 'destination', in: 'query', required: true, example: 'Ramallah' }
+          { name: 'origin', in: 'query', required: true, schema: { type: 'string' }, example: 'Nablus, Palestine', description: 'City name, checkpoint name, or landmark' },
+          { name: 'destination', in: 'query', required: true, schema: { type: 'string' }, example: 'Ramallah, Palestine', description: 'City name, checkpoint name, or landmark' }
         ],
         responses: { 200: { description: 'Success' } }
       }
     },
-    '/weather': { get: { tags: ['🌤️ Weather'], summary: '[E1.1] Get Weather', parameters: [{ name: 'city', in: 'query', required: true, example: 'Nablus' }], responses: { 200: { description: 'Success' } } } },
-    '/weather/checkpoint/{id}': { get: { tags: ['🌤️ Weather'], summary: '[E1.2] CP Weather', parameters: [{ name: 'id', in: 'path', required: true, example: 1 }], responses: { 200: { description: 'Success' } } } },
-    '/weather/incident/{id}': { get: { tags: ['🌤️ Weather'], summary: '[E1.3] Incident Weather', parameters: [{ name: 'id', in: 'path', required: true, example: 1 }], responses: { 200: { description: 'Success' } } } },
+    '/weather': { get: { tags: ['🌤️ Weather'], summary: '[E1.1] Get Weather by City', parameters: [{ name: 'city', in: 'query', required: true, schema: { type: 'string' }, example: 'Nablus' }], responses: { 200: { description: 'Success' } } } },
+    '/weather/checkpoint/{id}': { get: { tags: ['🌤️ Weather'], summary: '[E1.2] Get Weather at Checkpoint', parameters: [{ name: 'id', in: 'path', required: true, example: 1, description: 'Checkpoint ID' }], responses: { 200: { description: 'Success' } } } },
+    '/weather/incident/{id}': { get: { tags: ['🌤️ Weather'], summary: '[E1.3] Get Weather at Incident', parameters: [{ name: 'id', in: 'path', required: true, example: 1, description: 'Incident ID' }], responses: { 200: { description: 'Success' } } } },
     '/graphql': {
       post: {
         tags: ['🔮 GraphQL'],
-        summary: '[G1.1] Execute Query',
+        summary: '[G1.1] Execute GraphQL Query',
         requestBody: { content: { 'application/json': { examples: {
-          'Ready-made example': { value: { query: '{ incidents { title severity status area } }' } },
+          'Get all incidents': { value: { query: '{ incidents { id title severity status area } }' } },
+          'Filter by severity': { value: { query: '{ incidents(severity: "critical") { id title area } }' } },
+          'Get all checkpoints': { value: { query: '{ checkpoints { id name area current_status } }' } },
+          'Filter checkpoints by area': { value: { query: '{ checkpoints(area: "نابلس") { id name current_status } }' } },
+          'Get all reports': { value: { query: '{ reports { id title category status } }' } },
+          'Get single incident': { value: { query: '{ incident(id: 1) { id title description severity status } }' } },
+          'Combined query': { value: { query: '{ incidents { id title severity } checkpoints { name current_status } }' } },
           'Try it yourself': { value: { query: '' } }
         } } } },
         responses: { 200: { description: 'Success' } }
